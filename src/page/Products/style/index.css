@@ -1,0 +1,8 @@
+.container-Products{
+    padding: 2rem;
+}
+
+.width-product{
+    display: grid;
+    width: 100%;
+}

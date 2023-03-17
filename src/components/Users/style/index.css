@@ -1,0 +1,31 @@
+.Product-Form input {
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: auto;
+    color: #bebebe;
+    background-color: #2c2c2c;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+.Product-Form input:hover {
+    border-color: #8d8d8d;
+}
+
+.Product-Form{
+    padding: 50px;
+    margin: auto;
+    width: 100%;
+    max-width: 520px;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 8px;
+    background-color: #243c47;
+}
