@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
-import { createBrowserRouter, RouterProvider, Routes, Route, Router, Outlet, useRoutes, Navigate } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider, Routes, Route, Router, Outlet, useRoutes, Navigate, useNavigate } from 'react-router-dom'
 import './App.css'
 import Home from './page/home/home'
 import Login from './page/auth/login.jsx'
@@ -42,7 +42,7 @@ function App() {
           element: <Section />
         },
         {
-          path: "home",
+          index: true,
           element: <HomeView/>
         },
         {
@@ -91,6 +91,10 @@ function App() {
                   element: <AddUser/>
                 }
               ]
+            },
+            {
+              path: "perfil",
+              element: <Perfil />
             }
           ]
         }
@@ -103,10 +107,6 @@ function App() {
           index: true,
           element: <Login />
         },
-        {
-          path: "perfil",
-          element: (getItem === null ? (<Navigate to="/login" replace={true} />) : (<Perfil />))
-        }
       ]
     },
     {

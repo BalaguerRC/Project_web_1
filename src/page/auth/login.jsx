@@ -32,13 +32,13 @@ export default function Login() {
                     setError(null);
                     const getToken = localStorage.getItem("Token");
                     if (getToken != null) {
-                        navigate("perfil");
+                        navigate("/perfil");
                     }
                     //navigate("perfil");
                 }
             }).catch(err => {
                 console.log(err);
-                //setError("invalid email or password");
+                setError("Error fetch");
             })
         } catch (error) {
             setError('Inalid email or password')
@@ -60,11 +60,11 @@ export default function Login() {
                         <label className="label">
                             <span className="label-text">Email</span>
                         </label>
-                        <input type="email" placeholder="email" className="input input-bordered w-full" ref={Email} />
+                        <input type="email" placeholder="email" className="input input-bordered w-full" ref={Email} autoComplete="username"/>
                         <label className="label">
                             <span className="label-text">Password</span>
                         </label>
-                        <input type="password" placeholder="password" className="input input-bordered w-full" ref={Password} />
+                        <input type="password" placeholder="password" className="input input-bordered w-full" ref={Password} autoComplete="current-password"/>
                         <label class="label">
                             <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
                         </label>

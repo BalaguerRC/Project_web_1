@@ -30,7 +30,6 @@ const Perfil =()=>{
             {getData.date}
             <br/>
         </div>
-        <button  onClick={()=>LogOut()}>Log Out</button>
     </>
 }
 

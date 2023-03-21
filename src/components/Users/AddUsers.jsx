@@ -25,7 +25,7 @@ const AddUser = () => {
                 <input type="password" placeholder="Password" ref={Password} />
             </div>
             <div className="form-input">
-                <input type="text" placeholder="Fecha de Nacimiento" ref={Date} />
+                <input type="date" placeholder="Fecha de Nacimiento" ref={Date} />
             </div>
             <button className="btn" onClick={() => AddUser(Name.current.value,Email.current.value,Password.current.value,Date.current.value)}>Save</button>
         </form>
