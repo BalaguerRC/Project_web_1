@@ -10,7 +10,8 @@ const Users = () => {
 
     const getItem = localStorage.getItem("Token");
     const [user, setUsers] = useState([]);
-    const GetUsers = async () => {
+
+    /*const GetUsers = async () => {
 
         await fetch(import.meta.env.VITE_URL + "/Users", {
             method: "GET",
@@ -21,26 +22,73 @@ const Users = () => {
             .then(resp => resp.json())
             .then(data => setUsers(data))
             .catch(err => console.log(err))
+    }*/
+
+    /**Pagination */
+    const [pageNumber, setPageNumber] = useState(0);
+    const [pageSize, setPageSize] = useState(0);
+
+    const GetUsersWithPag = async () => {
+        await fetch(import.meta.env.VITE_URL + "/ProductsPag/getUser", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + getItem
+            }
+        })
+            .then(resp => resp.json())
+            .then(data => {
+                console.log(data)
+                setPageNumber(data.totalPages);
+                setUsers(data.data)
+                setPageSize(data.pageSize);
+            })
+            .catch(err => console.log(err))
     }
+
+    const pageNumbers = [...Array(pageNumber + 1).keys()].slice(1)
+
+    useEffect(() => {
+        GetUsersWithPag();
+    }, [])
 
     //console.log("Lista: ", user);
 
     const AddUser = async (name, email, password, date) => {
         await Add(name, email, password, date)
-        await GetUsers();
+        await GetUsersWithPag();
     }
 
-    useEffect(() => {
+    /*useEffect(() => {
         GetUsers();
-    }, [])
+    }, [])*/
 
     //const navigate = useNavigate();
 
     const DeleteUser = async (id) => {
         if (id != null) {
             await Delete(id);
-            await GetUsers();
+            await GetUsersWithPag();
         }
+    }
+
+    //pagination
+
+    const currentPage = async (pag) => {
+        console.log("Pagina: " + pag + "Tamaño: " + pageSize)
+        await fetch(import.meta.env.VITE_URL + "/ProductsPag/getUser?pageNumber=" + pag + "&pageSize=" + pageSize, {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + getItem
+            }
+        })
+            .then(resp => resp.json())
+            .then(data => {
+                console.log(data)
+                setPageNumber(data.totalPages);
+                setUsers(data.data)
+                setPageSize(data.pageSize);
+            })
+            .catch(err => console.log(err))
     }
 
     return <div className="container-Products">
@@ -60,23 +108,23 @@ const Users = () => {
             <div className="modal-box">
                 <a href="#" className="btn btn-sm btn-circle absolute right-2 top-2" >✕</a>
                 <h3 className="text-lg font-bold">Agregar Usuario</h3>
-                <form className="form-control" onSubmit={(e)=>e.preventDefault()}>
+                <form className="form-control" onSubmit={(e) => e.preventDefault()}>
                     <label className="label">
                         <span className="label-text">Nombre</span>
                     </label>
-                    <input type="text" placeholder="nombre..." className="input input-bordered w-full max-w-xs w-11/12 max-w-5xl width-product" ref={Name} required/>
+                    <input type="text" placeholder="nombre..." className="input input-bordered w-full max-w-xs w-11/12 max-w-5xl width-product" ref={Name} required />
                     <label className="label">
                         <span className="label-text">Email</span>
                     </label>
-                    <input type="email" placeholder="descripcion..." className="input input-bordered w-full max-w-xs w-11/12 max-w-5xl width-product" ref={Email} required/>
+                    <input type="email" placeholder="descripcion..." className="input input-bordered w-full max-w-xs w-11/12 max-w-5xl width-product" ref={Email} required />
                     <label className="label">
                         <span className="label-text">Contraseña</span>
                     </label>
-                    <input type="new-password" placeholder="contraseña..." className="input input-bordered w-full max-w-xs w-11/12 max-w-5xl width-product" ref={Password} required/>
+                    <input type="password" placeholder="contraseña..." className="input input-bordered w-full max-w-xs w-11/12 max-w-5xl width-product" ref={Password} required />
                     <label className="label">
                         <span className="label-text">Fecha de Nacimiento</span>
                     </label>
-                    <input type="date" className="input input-bordered w-full max-w-xs w-11/12 max-w-5xl width-product" ref={Date} required/>
+                    <input type="date" className="input input-bordered w-full max-w-xs w-11/12 max-w-5xl width-product" ref={Date} required />
                     <div className="modal-action">
                         <a href="#" className="btn btn-outline btn-success" onClick={() => AddUser(Name.current.value, Email.current.value, Password.current.value, Date.current.value)}>Guardar</a>
                     </div>
@@ -89,7 +137,7 @@ const Users = () => {
             <table className="table table-compact my-5 table-zebra w-full">
                 <thead>
                     <tr className="active">
-                        <th></th>
+                        <th>ID</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Password</th>
@@ -122,10 +170,9 @@ const Users = () => {
         <div className="divider"></div>
         <div className="text-center">
             <div className="btn-group">
-                <button className="btn btn-md btn-active">1</button>
-                <button className="btn btn-md">2</button>
-                <button className="btn btn-md">3</button>
-                <button className="btn btn-md">4</button>
+                {pageNumbers && pageNumbers.map(element => {
+                    return <a href={"#page" + element} className="btn btn-md  bg-blue-700" key={element} onClick={() => currentPage(element)}>{element}</a>
+                })}
             </div>
         </div>
     </div>

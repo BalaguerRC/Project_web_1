@@ -12,25 +12,13 @@ const Products = () => {
     const Author = useRef();
     const Category = useRef();
     const Category2 = useRef();
+    const Image = useRef();
     const Quantity = useRef();
     const getItem = localStorage.getItem("Token");
     const [products, setProducts] = useState([]);
     const [editar, setEditar] = useState(false);
+    const [LinkImagen, setLinkImagen] = useState(null);
     const [ID, setID] = useState(0);
-    //const btnActivo=false;
-    const [btnActivo, setbtnActivo] = useState(false);
-
-    /*const GetProducts = async () => {
-        await fetch(import.meta.env.VITE_URL + "/Products", {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + getItem
-            }
-        })
-            .then(resp => resp.json())
-            .then(data => setProducts(data))
-            .catch(err => console.log(err))
-    }*/
 
     /**
      * GetProductswithpage
@@ -55,6 +43,32 @@ const Products = () => {
             .catch(err => console.log(err))
     }
 
+    //image
+    const onFileChange = async(event) => {
+        //setFile(event.target.files[0])
+        const clientID = import.meta.env.VITE_CLIENT_ID
+
+        const file = event.target.files[0]
+
+        //console.log("agregado...")
+        const formdata = new FormData();
+        //
+        formdata.append("image", file);
+
+        await fetch("https://api.imgur.com/3/image/", {
+            method: "POST",
+            body: formdata,
+            headers: {
+                Authorization: "Client-ID " + clientID,
+                //Accept: "application/json",
+            },
+            mimeType: 'multipart/form-data',
+        }).then(data => data.json())
+            .then(res => setLinkImagen(res.data.link))
+            .catch(err => console.log("error: " + err))
+        console.log(file)
+    };
+
     const pageNumbers = [...Array(pageNumber + 1).keys()].slice(1)
     //console.log("Lista: ", products);
 
@@ -68,6 +82,7 @@ const Products = () => {
 
     const DeleteProduct = async (id) => {
         await Delete(id);
+        GetProductsWithPag();
     }
 
     //categories
@@ -90,14 +105,16 @@ const Products = () => {
     }, [])
 
     //ADD
-    const AddProduct = async (name, description, precio, author, idCategory, quantity) => {
-        await Add(name, description, precio, author, idCategory, quantity)
+    const AddProduct = async (name, description, precio, author, idCategory, quantity, image) => {
+        await Add(name, description, precio, author, idCategory, quantity, image)
+        Clear();
         await GetProductsWithPag();
+        
     }
 
     //edit
 
-    const ShowEdit = async (id, name, description, precio, author, quantity) => {
+    const ShowEdit = async (id, name, description, precio, author, quantity,image) => {
         //await setEditar(true)
         setID(id)
         //await Edit(id,name, description, precio, author, idCategory)
@@ -106,12 +123,15 @@ const Products = () => {
         Price.current.value = precio
         Author.current.value = author
         Quantity.current.value = quantity
+        setLinkImagen(image)
 
         console.log(id, editar)
     }
 
-    const EditProduct = async (name, description, precio, author, idCategory, quantity) => {
-        await Edit(ID, name, description, precio, author, idCategory, quantity)
+    const EditProduct = async (name, description, precio, author, idCategory, quantity,image) => {
+        await Edit(ID, name, description, precio, author, idCategory, quantity,image)
+        //console.log(ID, name, description, precio, author, idCategory, quantity,image)
+        Clear();
         await GetProductsWithPag();
     }
 
@@ -145,12 +165,33 @@ const Products = () => {
     }
 
     //pagination
+    //const active=0
+    
+    const currentPage = async (pag) => {
+        const button=document.getElementById("Button"+pag)
+        //console.log(active)
+        const pag2=pag;
 
-    const currentPage=async(pag)=>{
+        button.addEventListener("click", function(){
+            if(pag2=!pag){
+                //active=false
+                button.style.backgroundColor="#A144BD"
+            }
+            else{
+                //active=true
+                button.style.backgroundColor="#4456BD"
+            }
+            //button.style.backgroundColor="#A144BD"
+            
+            //.style.backgroundColor="#A144BD"
+            
+            //.style.background= "#A144BD"
+        })
+
+        //console.log(button)
         
-        
-        console.log("Pagina: " + pag + "Tamaño: "+ pageSize)
-        await fetch(import.meta.env.VITE_URL + "/ProductsPag?pageNumber="+pag+"&pageSize="+pageSize, {
+        console.log("Pagina: " + pag + "Tamaño: " + pageSize)
+        await fetch(import.meta.env.VITE_URL + "/ProductsPag?pageNumber=" + pag + "&pageSize=" + pageSize, {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + getItem
@@ -158,13 +199,22 @@ const Products = () => {
         })
             .then(resp => resp.json())
             .then(data => {
-                setbtnActivo(true);
                 console.log(data)
                 setPageNumber(data.totalPages);
                 setProducts(data.data)
                 setPageSize(data.pageSize);
             })
             .catch(err => console.log(err))
+    }
+
+    const Clear = () => {
+        setEditar(false);
+        Name.current.value = ""
+        Description.current.value = ""
+        Price.current.value = ""
+        Author.current.value = ""
+        Quantity.current.value = ""
+        setLinkImagen(null);
     }
     return <div className="">
         <div className="container-Products ">
@@ -181,7 +231,7 @@ const Products = () => {
 
             <div className="flex" style={{ "justifyContent": "space-between" }}>
                 <div className=" justify-start">
-                    {/**Modal */}
+
                     <a className="btn btn-ghost bg-accent-focus" href="#add">Agregar</a>
                 </div>
                 <div className="overflow-x-auto" style={{ "marginLeft": "6px" }}>
@@ -201,20 +251,15 @@ const Products = () => {
                     </div>
                 </div>
             </div>
-
+            {/**Modal */}
             <div className="modal" id={editar ? "edit" : "add"}>
                 <div className="modal-box">
                     <a href="#" className="btn btn-sm btn-circle absolute right-2 top-2" onClick={editar ?
                         () => {
-                            setEditar(false);
-                            Name.current.value = ""
-                            Description.current.value = ""
-                            Price.current.value = ""
-                            Author.current.value = ""
-                            Quantity.current.value = ""
+                            Clear()
                         }
                         : () => {
-                            //setEditar(true)
+                            Clear()
                         }}>✕</a>
                     <h3 className="text-lg font-bold">{editar ? "Editar Producto" : "Agregar Producto"}</h3>
                     <div className="form-control">
@@ -256,12 +301,27 @@ const Products = () => {
                         <label className="label">
                             <span className="label-text">Imagen</span>
                         </label>
-                        <input type="file" className="file-input w-full max-w-xs" />
+                        <div className="flex w-full p-1">
+                            <input type="file" className="file-input w-full max-w-xs" onChange={(e) => onFileChange(e)} id="inputFile" />
+                            {LinkImagen != null ? (<div className="avatar">
+                                <div className="w-16 rounded">
+                                    <img src={LinkImagen} alt="Tailwind-CSS-Avatar-component" />
+                                </div>
+                            </div>) : null}
+                        </div>
+
+                        {LinkImagen != null ? (<div className="flex w-full p-1">
+                            <label className="">
+                                <span className="label-text">URL imagen: {LinkImagen}</span>
+                            </label>
+                        </div>
+                        ) : null}
+
                     </div>
                     <div className="modal-action">
-                        {editar ? (<a href="#" className="btn btn-outline btn-warning" onClick={() => EditProduct(Name.current.value, Description.current.value, Price.current.value, Author.current.value, Category.current.value, Quantity.current.value)}>Editar</a>)
+                        {editar ? (<a href="#" className="btn btn-outline btn-warning" onClick={() => EditProduct(Name.current.value, Description.current.value, Price.current.value, Author.current.value, Category.current.value, Quantity.current.value,LinkImagen)}>Editar</a>)
                             :
-                            (<a href="#" className="btn btn-outline btn-success" onClick={() => AddProduct(Name.current.value, Description.current.value, Price.current.value, Author.current.value, Category.current.value, Quantity.current.value)}>Guardar</a>)}
+                            (<a href="#" className="btn btn-outline btn-success" onClick={() => AddProduct(Name.current.value, Description.current.value, Price.current.value, Author.current.value, Category.current.value, Quantity.current.value, LinkImagen)}>Guardar</a>)}
                     </div>
                 </div>
             </div>
@@ -271,7 +331,7 @@ const Products = () => {
                 <table className="table table-compact table-zebra my-5 w-full md:border-collapse">
                     <thead>
                         <tr className="active">
-                            <th></th>
+                            <th>ID</th>
                             <th>Name</th>
                             <th>Descripcion</th>
                             <th>Precio</th>
@@ -295,7 +355,7 @@ const Products = () => {
                                     <td>{data.author}</td>
                                     <td>{data.category}</td>
                                     <td>{data.quantity}</td>
-                                    <td>{data.image}</td>
+                                    <td className="overflow-x-auto">{data.image}</td>
                                     <td>{data.date.substr(0, 10)}</td>
                                     <th>
                                         {/*<Link to={"/product/" + data.id} className="btn btn-outline btn-warning btn-xs">
@@ -303,7 +363,7 @@ const Products = () => {
                                     </Link>*/}
                                         <a href="#edit" className="btn btn-outline btn-warning btn-xs" onClick={() => {
                                             setEditar(true)
-                                            ShowEdit(data.id, data.name, data.description, data.precio, data.author, data.quantity)
+                                            ShowEdit(data.id, data.name, data.description, data.precio, data.author, data.quantity,data.image)
                                         }}>Edit</a>
 
                                         <button className="btn btn-outline btn-error btn-xs" onClick={() => DeleteProduct(data.id)}>Delete</button>
@@ -319,9 +379,11 @@ const Products = () => {
             <div className="divider"></div>
             <div className="text-center">
                 <div className="btn-group">
-                    {pageNumbers && pageNumbers.map(element => {
+                    {pageNumbers && pageNumbers.map((element,index) => {
+
+                        //const desk=element
                         // console.log("Cantidad: " + element)
-                        return <a href={"#page"+element} className="btn btn-md  bg-blue-700" key={element} onClick={()=>currentPage(element)}>{element}</a>
+                        return <a href={"#page" + element} id={"Button"+element} className="btn btn-md bg-blue-700 " key={index} onClick={() => currentPage(element)}>{element}</a>
                     })}
                 </div>
             </div>

@@ -1,38 +1,90 @@
 import { list } from "postcss";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const Section = () => {
+    const ImagenFile = useRef();
+    const [Imagen, setImagen] = useState();
 
-    const [pageNumber, setPageNumber] = useState(0);
-    const [pageNumber2, setPageNumber2] = useState([]);
-    const [pageSize, setPageSize] = useState([]);
-    const [data, setData] = useState([]);
     const getItem = localStorage.getItem("Token");
 
-    const GetProductsWithPag = async () => {
-        await fetch(import.meta.env.VITE_URL + "/ProductsPag", {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + getItem
-            }
+    const uri = "https://api.imgur.com/3/image/";
+
+    //const file = document.getElementById("file");
+    const img = document.getElementById("showImagen");
+    /*const ImgurSave = () => {
+        file.addEventListener("change", ev => {
+            //const formdata = new FormData()
+            formdata.append("image", ev.target.files[0])
+            fetch(uri, {
+                method: "POST",
+                headers: {
+                    Authorization: `Client-ID ${clientID}`
+                },
+                body: formdata
+            }).then(data => data.json()).then(res => {
+                img.src = res.data.link
+                setImagen(res.data.link)
+                console.log("Exito")
+            }).catch(err=>console.log("error: "+err))
         })
-            .then(resp => resp.json())
-            .then(data => {
-                setPageNumber(data.totalPages);
-            })
-            .catch(err => console.log(err))
-    }
+    }*/
 
-    const pageNumbers= [...Array(pageNumber+1).keys()].slice(1)
-    console.log(pageNumbers)
+    const [file, setFile] = useState(); 
+    const [LinkImagen, setLinkImagen] = useState();
 
-    useEffect(() => {
-        //console.log("Products: "+products);
-        GetProductsWithPag();
-    }, [])
+    const clientID = "6f0ddd1e3abc3e4";
+    const auth = "Client-ID " + clientID
 
+    const onFileChange = (event) => {
+        //setFile(event.target.files[0])
 
-    console.log("Products: " + pageNumber);
+        const file=event.target.files[0]
+
+        console.log("agregado...")
+        const formdata = new FormData();
+        //
+        formdata.append("image", file);
+
+        fetch("https://api.imgur.com/3/image/", {
+            method: "POST",
+            body: formdata,
+            headers: {
+                Authorization: auth,
+                //Accept: "application/json",
+            },
+            mimeType: 'multipart/form-data',
+        }).then(data => data.json())
+            .then(res => setLinkImagen(res.data.link))
+            .catch(err => console.log("error: " + err))
+        console.log(file)
+    };
+   
+
+    /*
+    const onFileUpload = async () => {
+
+        const clientID = "6f0ddd1e3abc3e4";
+        const auth = "Client-ID " + clientID
+        //
+        const formdata = new FormData();
+        //
+        formdata.append("image", file);
+        //
+        await fetch("https://api.imgur.com/3/image/", {
+            method: "POST",
+            body: formdata,
+            headers: {
+                Authorization: auth,
+                //Accept: "application/json",
+            },
+            mimeType: 'multipart/form-data',
+        }).then(data => data.json())
+            .then(res => setLinkImagen(res.data.link))
+            .catch(err => console.log("error: " + err))
+        console.log(file)
+        console.log("form es :" + formdata)
+    };
+*/
     return <div>
         <section>
             <div className="container mx-auto bg-gray-200 rounded-xl shadow border p-8 m-10">
@@ -42,20 +94,16 @@ const Section = () => {
                 <h5 className="text-gray-500 text-lg">
                     Example
                 </h5>
-                <div className="text-center">
-                    <div className="btn-group">
-                        {pageNumbers != 0 ? pageNumbers.map(element => {
-                           // console.log("Cantidad: " + element)
-                            return <button className="btn btn-md">{element}</button>
-                        }) : (<div>Token Expired</div>)
-                        }
-                    </div>
-                </div>
             </div>
         </section>
-        <footer>
-
-        </footer>
+        <div>
+            <label className="label">
+                <span className="label-text">Imagen</span>
+            </label>
+            <img id="showImagen" />
+            <input name="file" type="file" className="file-input w-full max-w-xs" onChange={(e) => onFileChange(e)} />
+            <h3>URL: {LinkImagen}</h3>
+        </div>
     </div>
 }
 export default Section;

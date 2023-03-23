@@ -17,6 +17,7 @@ import AddUser from './components/Users/AddUsers'
 import EditCategory from './components/Category/EditCategory'
 import EditProduct from './components/Products/EditProduct'
 import HomeView from './page/home/homeview'
+import Imagen from './page/home/Imagen'
 
 function App() {
   const getItem = localStorage.getItem("Token");
@@ -95,6 +96,10 @@ function App() {
             {
               path: "perfil",
               element: <Perfil />
+            },
+            {
+              path: "imagen",
+              element: <Imagen />
             }
           ]
         }

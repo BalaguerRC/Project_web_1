@@ -10,21 +10,10 @@ const Category = () => {
     const [editar, setEditar] = useState(false);
     const [ID, setID] = useState(0);
 
-    /*const GetCategory = async () => {
-        await fetch(import.meta.env.VITE_URL + "/Categories", {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + getItem
-            }
-        })
-            .then(resp => resp.json())
-            .then(data => setCategories(data))
-            .catch(err => console.log(err))
-    }*/
     const [pageNumber, setPageNumber] = useState(0);
     const [pageSize, setPageSize] = useState(0);
 
-    const GetProductsWithPag = async () => {
+    const GetCategoriessWithPag = async () => {
         await fetch(import.meta.env.VITE_URL + "/CategoryPag", {
             method: "GET",
             headers: {
@@ -44,13 +33,13 @@ const Category = () => {
     const pageNumbers = [...Array(pageNumber + 1).keys()].slice(1)
 
     useEffect(() => {
-        GetProductsWithPag();
+        GetCategoriessWithPag();
     }, [])
 
     //ADD
     const AddCategory = async (name) => {
         await Add(name)
-        await GetProductsWithPag();
+        await GetCategoriessWithPag();
     }
 
     //edit
@@ -65,7 +54,7 @@ const Category = () => {
 
     const EditCategory = async (name) => {
         await Edit(ID, name);
-        await GetProductsWithPag();
+        await GetCategoriessWithPag();
     }
 
     const DeleteCategory = async (id) => {
@@ -140,7 +129,7 @@ const Category = () => {
 
         {/**END */}
         <div className="overflow-x-auto">
-            <table className="table my-5 table-zebra w-full">
+            <table className="table table-compact my-5 table-zebra w-full">
                 <thead>
                     <tr>
                         <th>ID</th>

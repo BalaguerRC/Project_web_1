@@ -66,6 +66,7 @@ export default function Home() {
                             <li><a href="/category">Categoria</a></li>
                             <li><a href="/users">Usuarios</a></li>
                             <li><a href="/section">Section</a></li>
+                            <li><a href="/imagen">Imagen</a></li>
                         </ul>
                     </div>
                     <div className="navbar-end">

@@ -8,7 +8,7 @@ export const Get = async () => {
         }
     }).then(resp=>resp.json()).then(data=>console.log(data))
 }
-export const Add = async (name,description,precio,author,idCategory,quantity) => {
+export const Add = async (name,description,precio,author,idCategory,quantity,image) => {
 
     //await console.log("Name2: " + name)
     await fetch(import.meta.env.VITE_URL + "/Products", {
@@ -23,7 +23,8 @@ export const Add = async (name,description,precio,author,idCategory,quantity) =>
             precio: precio,
             author: author,
             idCategory: idCategory,
-            quantity: quantity
+            quantity: quantity,
+            image: image
         })
     }).then(res=>res.json()).then(data=>{
         if(data.succes===true){
@@ -31,8 +32,8 @@ export const Add = async (name,description,precio,author,idCategory,quantity) =>
         }
     }).catch(err=>console.log("Error: " + err))
 }
-export const Edit = async (id,name, description, precio, author, idCategory,quantity) => {
-    await console.log(quantity)
+export const Edit = async (id,name, description, precio, author, idCategory,quantity,image) => {
+    console.log(id,name, description, precio, author, idCategory,quantity,image)
     await fetch(import.meta.env.VITE_URL + "/Products/" + id, {
         method: "PUT",
         headers: {
@@ -45,11 +46,12 @@ export const Edit = async (id,name, description, precio, author, idCategory,quan
             precio: precio,
             author: author,
             idCategory: idCategory,
-            quantity: quantity
+            quantity: quantity,
+            image: image
         })
     }).then(res => res.json()).then(data => {
         if (data.succes === true) {
-            console.log(data)
+            console.log("data es: "+ data)
         }
     }).catch(err => console.log("Error: " + err))
 }
