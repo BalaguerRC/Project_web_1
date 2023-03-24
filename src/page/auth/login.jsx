@@ -32,7 +32,7 @@ export default function Login() {
                     setError(null);
                     const getToken = localStorage.getItem("Token");
                     if (getToken != null) {
-                        navigate("/perfil");
+                        navigate("/");
                     }
                     //navigate("perfil");
                 }
@@ -56,17 +56,20 @@ export default function Login() {
             <div className="card-body">
                 <div className="form-control">
                     <h2 className="stat-value text-center">Login</h2>
+                    <label className="label">
+                        <a href="/" className="label-text-alt link link-hover">{"<-Home"}</a>
+                    </label>
                     <form onSubmit={(e) => isSubmit(e)}>
                         <label className="label">
                             <span className="label-text">Email</span>
                         </label>
-                        <input type="email" placeholder="email" className="input input-bordered w-full" ref={Email} autoComplete="username"/>
+                        <input type="email" placeholder="email" className="input input-bordered w-full" ref={Email} autoComplete="username" />
                         <label className="label">
                             <span className="label-text">Password</span>
                         </label>
-                        <input type="password" placeholder="password" className="input input-bordered w-full" ref={Password} autoComplete="current-password"/>
-                        <label class="label">
-                            <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
+                        <input type="password" placeholder="password" className="input input-bordered w-full" ref={Password} autoComplete="current-password" />
+                        <label className="label">
+                            <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
                         </label>
                         <div>
                             {error != null ? (<a style={{ "color": "tomato" }}>{error}</a>) : null}
@@ -79,27 +82,6 @@ export default function Login() {
             </div>
         </div>
     </div>
-
-
-    {/**
-<section className="login md:container md:mx-auto">
-        <div className="login-container bg-midnight text-tahiti">
-            <h3>Login</h3>
-            <form onSubmit={(e) => isSubmit(e)}>
-                <div className="form-input">
-                    <input type="email" placeholder="email" ref={Email} />
-                </div>
-                <div className="form-input">
-                    <input type="password" placeholder="password" ref={Password} />
-                </div>
-                <div>
-                    {error != null ? (<a style={{ "color": "tomato" }}>{error}</a>) : null}
-                </div>
-                <button onClick={() => response(Email.current.value, Password.current.value)}>Login</button>
-            </form>
-        </div>
-    </section>
-*/}
 }
 
 //export default Login;

@@ -10,23 +10,13 @@ const Users = () => {
 
     const getItem = localStorage.getItem("Token");
     const [user, setUsers] = useState([]);
+    const [error, setError] = useState(false);
 
-    /*const GetUsers = async () => {
-
-        await fetch(import.meta.env.VITE_URL + "/Users", {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + getItem
-            }
-        })
-            .then(resp => resp.json())
-            .then(data => setUsers(data))
-            .catch(err => console.log(err))
-    }*/
-
-    /**Pagination */
-    const [pageNumber, setPageNumber] = useState(0);
-    const [pageSize, setPageSize] = useState(0);
+    //page
+    const [nextPage, setNextPage] = useState(null);
+    const [previousPage, setPreviousPage] = useState(null);
+    const [currentNumberPage, setCurrentNumberPage] = useState(null);
+    //page
 
     const GetUsersWithPag = async () => {
         await fetch(import.meta.env.VITE_URL + "/ProductsPag/getUser", {
@@ -38,31 +28,34 @@ const Users = () => {
             .then(resp => resp.json())
             .then(data => {
                 console.log(data)
-                setPageNumber(data.totalPages);
+                //setPageNumber(data.totalPages);
+                setNextPage(data.nextPage);
+                setCurrentNumberPage(data.pageNumber);
                 setUsers(data.data)
-                setPageSize(data.pageSize);
+                //setPageSize(data.pageSize);
             })
-            .catch(err => console.log(err))
+            .catch(err => {console.log(err)
+                setError(!error)
+            })
     }
-
-    const pageNumbers = [...Array(pageNumber + 1).keys()].slice(1)
+    //toast
+    let toas = <div className="toast ">
+        <div className="alert alert-info">
+            <div>
+                <span>Token Expirado</span>
+            </div>
+        </div>
+    </div>
 
     useEffect(() => {
         GetUsersWithPag();
     }, [])
 
-    //console.log("Lista: ", user);
 
     const AddUser = async (name, email, password, date) => {
         await Add(name, email, password, date)
         await GetUsersWithPag();
     }
-
-    /*useEffect(() => {
-        GetUsers();
-    }, [])*/
-
-    //const navigate = useNavigate();
 
     const DeleteUser = async (id) => {
         if (id != null) {
@@ -74,8 +67,7 @@ const Users = () => {
     //pagination
 
     const currentPage = async (pag) => {
-        console.log("Pagina: " + pag + "Tamaño: " + pageSize)
-        await fetch(import.meta.env.VITE_URL + "/ProductsPag/getUser?pageNumber=" + pag + "&pageSize=" + pageSize, {
+        await fetch(pag, {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + getItem
@@ -84,9 +76,12 @@ const Users = () => {
             .then(resp => resp.json())
             .then(data => {
                 console.log(data)
-                setPageNumber(data.totalPages);
-                setUsers(data.data)
-                setPageSize(data.pageSize);
+                //setPageNumber(data.totalPages);
+                setUsers(data.data);
+                setNextPage(data.nextPage);
+                setCurrentNumberPage(data.pageNumber);
+                setPreviousPage(data.previousPage);
+                //setPageSize(data.pageSize);
             })
             .catch(err => console.log(err))
     }
@@ -96,7 +91,7 @@ const Users = () => {
 
         <div className="text-sm breadcrumbs my-5">
             <ul>
-                <li><a href="/home">Home</a></li>
+                <li><a href="/">Home</a></li>
                 <li>Usuarios</li>
             </ul>
         </div>
@@ -116,11 +111,11 @@ const Users = () => {
                     <label className="label">
                         <span className="label-text">Email</span>
                     </label>
-                    <input type="email" placeholder="descripcion..." className="input input-bordered w-full max-w-xs w-11/12 max-w-5xl width-product" ref={Email} required />
+                    <input type="email" placeholder="descripcion..." className="input input-bordered w-full max-w-xs w-11/12 max-w-5xl width-product" ref={Email} autoComplete="username" required />
                     <label className="label">
                         <span className="label-text">Contraseña</span>
                     </label>
-                    <input type="password" placeholder="contraseña..." className="input input-bordered w-full max-w-xs w-11/12 max-w-5xl width-product" ref={Password} required />
+                    <input type="password" placeholder="contraseña..." className="input input-bordered w-full max-w-xs w-11/12 max-w-5xl width-product" ref={Password} autoComplete="current-password" required />
                     <label className="label">
                         <span className="label-text">Fecha de Nacimiento</span>
                     </label>
@@ -168,13 +163,22 @@ const Users = () => {
             </table>
         </div>
         <div className="divider"></div>
+
         <div className="text-center">
-            <div className="btn-group">
-                {pageNumbers && pageNumbers.map(element => {
-                    return <a href={"#page" + element} className="btn btn-md  bg-blue-700" key={element} onClick={() => currentPage(element)}>{element}</a>
-                })}
+            <div className="btn-group ">
+                {
+                    currentNumberPage != null ? (
+                        <div>
+                            <button className={previousPage == null ? "btn btn-disabled" : "btn "} onClick={() => currentPage(previousPage)}>«</button>
+                            <button className="btn bg-blue-700 btn-active">{currentNumberPage}</button>
+                            {/*btn-disabled*/}
+                            <button className={nextPage == null ? "btn btn-disabled" : "btn "} onClick={() => currentPage(nextPage)}>»</button>
+                        </div>
+                    ) : null
+                }
             </div>
         </div>
+        {error ? toas : null}
     </div>
 }
 

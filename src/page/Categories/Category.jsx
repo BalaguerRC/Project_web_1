@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+//import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Add, Edit, Delete } from "../../components/Category/CrudCategory";
 
 const Category = () => {
@@ -9,10 +9,16 @@ const Category = () => {
     const [categories, setCategories] = useState([]);
     const [editar, setEditar] = useState(false);
     const [ID, setID] = useState(0);
+    const [error, setError] = useState(false);
 
-    const [pageNumber, setPageNumber] = useState(0);
-    const [pageSize, setPageSize] = useState(0);
+    //const [pageNumber, setPageNumber] = useState(0);
+    //const [pageSize, setPageSize] = useState(0);
 
+    //page
+    const [nextPage, setNextPage] = useState(null);
+    const [previousPage, setPreviousPage] = useState(null);
+    const [currentNumberPage, setCurrentNumberPage] = useState(null);
+    //page
     const GetCategoriessWithPag = async () => {
         await fetch(import.meta.env.VITE_URL + "/CategoryPag", {
             method: "GET",
@@ -23,14 +29,25 @@ const Category = () => {
             .then(resp => resp.json())
             .then(data => {
                 console.log(data)
-                setPageNumber(data.totalPages);
+                //setPageNumber(data.totalPages);
+                setNextPage(data.nextPage);
+                setCurrentNumberPage(data.pageNumber);
+                //console.log("siguiente pagina :" +data.nextPage)
                 setCategories(data.data)
-                setPageSize(data.pageSize);
+                //console.log("page size: "+data.pageSize);
             })
-            .catch(err => console.log(err))
+            .catch(err => {console.log(err)
+                setError(!error)
+            })
     }
-
-    const pageNumbers = [...Array(pageNumber + 1).keys()].slice(1)
+    //toast
+    let toas = <div className="toast">
+        <div className="alert alert-info">
+            <div>
+                <span>Token Expirado</span>
+            </div>
+        </div>
+    </div>
 
     useEffect(() => {
         GetCategoriessWithPag();
@@ -63,14 +80,11 @@ const Category = () => {
             await GetCategory();
         }
     }
-
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
 
     //pagination
-
     const currentPage = async (pag) => {
-        console.log("Pagina: " + pag + "Tamaño: " + pageSize)
-        await fetch(import.meta.env.VITE_URL + "/CategoryPag?pageNumber=" + pag + "&pageSize=" + pageSize, {
+        await fetch(pag, {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + getItem
@@ -79,9 +93,12 @@ const Category = () => {
             .then(resp => resp.json())
             .then(data => {
                 console.log(data)
-                setPageNumber(data.totalPages);
-                setCategories(data.data)
-                setPageSize(data.pageSize);
+                //setPageNumber(data.totalPages);
+                setCategories(data.data);
+                setNextPage(data.nextPage);
+                setCurrentNumberPage(data.pageNumber);
+                setPreviousPage(data.previousPage);
+                //setPageSize(data.pageSize);
             })
             .catch(err => console.log(err))
     }
@@ -90,7 +107,7 @@ const Category = () => {
         <div className="text-2xl font-bold">Categoria</div>
         <div className="text-sm breadcrumbs my-5">
             <ul>
-                <li><a href="/home">Home</a></li>
+                <li><a href="/">Home</a></li>
                 <li>Categoria</li>
             </ul>
         </div>
@@ -161,14 +178,22 @@ const Category = () => {
             </table>
         </div>
         <div className="divider"></div>
+
         <div className="text-center">
-            <div className="btn-group">
-                {pageNumbers && pageNumbers.map(element=>{
-                    return <a href={"#page"+element} className="btn btn-md  bg-blue-700" key={element} onClick={()=>currentPage(element)}>{element}</a>
-                })}
+            <div className="btn-group ">
+                {
+                    currentNumberPage != null ? (
+                        <div>
+                            <button className={previousPage == null ? "btn btn-disabled" : "btn "} onClick={() => currentPage(previousPage)}>«</button>
+                            <button className="btn bg-blue-700 btn-active">{currentNumberPage}</button>
+                            {/*btn-disabled*/}
+                            <button className={nextPage == null ? "btn btn-disabled" : "btn "} onClick={() => currentPage(nextPage)}>»</button>
+                        </div>
+                    ) : null
+                }
             </div>
         </div>
-
+        {error ? toas : null}
     </div>
 
 }

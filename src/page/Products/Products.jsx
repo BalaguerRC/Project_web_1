@@ -12,19 +12,26 @@ const Products = () => {
     const Author = useRef();
     const Category = useRef();
     const Category2 = useRef();
-    const Image = useRef();
+    //const Image = useRef();
     const Quantity = useRef();
     const getItem = localStorage.getItem("Token");
     const [products, setProducts] = useState([]);
     const [editar, setEditar] = useState(false);
     const [LinkImagen, setLinkImagen] = useState(null);
     const [ID, setID] = useState(0);
+    const [error, setError] = useState(false);
 
     /**
      * GetProductswithpage
-     */
+     
     const [pageNumber, setPageNumber] = useState(0);
-    const [pageSize, setPageSize] = useState(0);
+    const [pageSize, setPageSize] = useState(0);*/
+
+    //page
+    const [nextPage, setNextPage] = useState(null);
+    const [previousPage, setPreviousPage] = useState(null);
+    const [currentNumberPage, setCurrentNumberPage] = useState(null);
+    //page
 
     const GetProductsWithPag = async () => {
         await fetch(import.meta.env.VITE_URL + "/ProductsPag", {
@@ -36,15 +43,28 @@ const Products = () => {
             .then(resp => resp.json())
             .then(data => {
                 console.log(data)
-                setPageNumber(data.totalPages);
+                //setPageNumber(data.totalPages);
+                setNextPage(data.nextPage);
+                setCurrentNumberPage(data.pageNumber);
                 setProducts(data.data)
-                setPageSize(data.pageSize);
+                //setPageSize(data.pageSize);
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                console.log(err)
+                setError(!error)
+            })
     }
+    //toast
+    let toas = <div className="toast">
+        <div className="alert alert-info">
+            <div>
+                <span>Token Expirado</span>
+            </div>
+        </div>
+    </div>
 
     //image
-    const onFileChange = async(event) => {
+    const onFileChange = async (event) => {
         //setFile(event.target.files[0])
         const clientID = import.meta.env.VITE_CLIENT_ID
 
@@ -69,7 +89,7 @@ const Products = () => {
         console.log(file)
     };
 
-    const pageNumbers = [...Array(pageNumber + 1).keys()].slice(1)
+    //const pageNumbers = [...Array(pageNumber + 1).keys()].slice(1)
     //console.log("Lista: ", products);
 
     useEffect(() => {
@@ -109,12 +129,12 @@ const Products = () => {
         await Add(name, description, precio, author, idCategory, quantity, image)
         Clear();
         await GetProductsWithPag();
-        
+
     }
 
     //edit
 
-    const ShowEdit = async (id, name, description, precio, author, quantity,image) => {
+    const ShowEdit = async (id, name, description, precio, author, quantity, image) => {
         //await setEditar(true)
         setID(id)
         //await Edit(id,name, description, precio, author, idCategory)
@@ -128,8 +148,8 @@ const Products = () => {
         console.log(id, editar)
     }
 
-    const EditProduct = async (name, description, precio, author, idCategory, quantity,image) => {
-        await Edit(ID, name, description, precio, author, idCategory, quantity,image)
+    const EditProduct = async (name, description, precio, author, idCategory, quantity, image) => {
+        await Edit(ID, name, description, precio, author, idCategory, quantity, image)
         //console.log(ID, name, description, precio, author, idCategory, quantity,image)
         Clear();
         await GetProductsWithPag();
@@ -166,32 +186,9 @@ const Products = () => {
 
     //pagination
     //const active=0
-    
+
     const currentPage = async (pag) => {
-        const button=document.getElementById("Button"+pag)
-        //console.log(active)
-        const pag2=pag;
-
-        button.addEventListener("click", function(){
-            if(pag2=!pag){
-                //active=false
-                button.style.backgroundColor="#A144BD"
-            }
-            else{
-                //active=true
-                button.style.backgroundColor="#4456BD"
-            }
-            //button.style.backgroundColor="#A144BD"
-            
-            //.style.backgroundColor="#A144BD"
-            
-            //.style.background= "#A144BD"
-        })
-
-        //console.log(button)
-        
-        console.log("Pagina: " + pag + "Tamaño: " + pageSize)
-        await fetch(import.meta.env.VITE_URL + "/ProductsPag?pageNumber=" + pag + "&pageSize=" + pageSize, {
+        await fetch(pag, {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + getItem
@@ -200,9 +197,12 @@ const Products = () => {
             .then(resp => resp.json())
             .then(data => {
                 console.log(data)
-                setPageNumber(data.totalPages);
-                setProducts(data.data)
-                setPageSize(data.pageSize);
+                //setPageNumber(data.totalPages);
+                setProducts(data.data);
+                setNextPage(data.nextPage);
+                setCurrentNumberPage(data.pageNumber);
+                setPreviousPage(data.previousPage);
+                //setPageSize(data.pageSize);
             })
             .catch(err => console.log(err))
     }
@@ -222,7 +222,7 @@ const Products = () => {
 
             <div className="text-sm breadcrumbs my-5">
                 <ul>
-                    <li><a href="/home">Home</a></li>
+                    <li><a href="/">Home</a></li>
                     <li>Productos</li>
                 </ul>
             </div>
@@ -319,7 +319,7 @@ const Products = () => {
 
                     </div>
                     <div className="modal-action">
-                        {editar ? (<a href="#" className="btn btn-outline btn-warning" onClick={() => EditProduct(Name.current.value, Description.current.value, Price.current.value, Author.current.value, Category.current.value, Quantity.current.value,LinkImagen)}>Editar</a>)
+                        {editar ? (<a href="#" className="btn btn-outline btn-warning" onClick={() => EditProduct(Name.current.value, Description.current.value, Price.current.value, Author.current.value, Category.current.value, Quantity.current.value, LinkImagen)}>Editar</a>)
                             :
                             (<a href="#" className="btn btn-outline btn-success" onClick={() => AddProduct(Name.current.value, Description.current.value, Price.current.value, Author.current.value, Category.current.value, Quantity.current.value, LinkImagen)}>Guardar</a>)}
                     </div>
@@ -363,7 +363,7 @@ const Products = () => {
                                     </Link>*/}
                                         <a href="#edit" className="btn btn-outline btn-warning btn-xs" onClick={() => {
                                             setEditar(true)
-                                            ShowEdit(data.id, data.name, data.description, data.precio, data.author, data.quantity,data.image)
+                                            ShowEdit(data.id, data.name, data.description, data.precio, data.author, data.quantity, data.image)
                                         }}>Edit</a>
 
                                         <button className="btn btn-outline btn-error btn-xs" onClick={() => DeleteProduct(data.id)}>Delete</button>
@@ -377,17 +377,23 @@ const Products = () => {
                 </table>
             </div>
             <div className="divider"></div>
-            <div className="text-center">
-                <div className="btn-group">
-                    {pageNumbers && pageNumbers.map((element,index) => {
 
-                        //const desk=element
-                        // console.log("Cantidad: " + element)
-                        return <a href={"#page" + element} id={"Button"+element} className="btn btn-md bg-blue-700 " key={index} onClick={() => currentPage(element)}>{element}</a>
-                    })}
+            <div className="text-center">
+                <div className="btn-group ">
+                    {
+                        currentNumberPage != null ? (
+                            <div>
+                                <button className={previousPage == null ? "btn btn-disabled" : "btn "} onClick={() => currentPage(previousPage)}>«</button>
+                                <button className="btn bg-blue-700 btn-active">{currentNumberPage}</button>
+                                {/*btn-disabled*/}
+                                <button className={nextPage == null ? "btn btn-disabled" : "btn "} onClick={() => currentPage(nextPage)}>»</button>
+                            </div>
+                        ) : null
+                    }
                 </div>
             </div>
         </div>
+        {error ? toas : null}
     </div>
 }
 
