@@ -12,17 +12,8 @@ export default function Home() {
     }
 
     const GetUserData = JSON.parse(localStorage.getItem("DATA"))
-    //console.log(GetUserData)
-
-    /*useEffect(() => {
-        setTimeout(() => {
-          // 👇 Redirects to about page, note the `replace: true`
-          navigate('/home');
-        }, 1000);
-      });*/
 
     const [amount, setAmount] = useState([]);
-
 
     const getItem = localStorage.getItem("Token");
 
@@ -55,6 +46,7 @@ export default function Home() {
                                 <li><a href="/product">Products</a></li>
                                 <li><a href="/category">Category</a></li>
                                 <li><a href="/users">Users</a></li>
+                                <li><a href="/bill">Facturas</a></li>
                                 <li className="disabled" ><a href="#">About</a></li>
                             </ul>
                         </div>
@@ -65,6 +57,7 @@ export default function Home() {
                             <li><a href="/product">Productos</a></li>
                             <li><a href="/category">Categoria</a></li>
                             <li><a href="/users">Usuarios</a></li>
+                            <li><a href="/bill">Facturas</a></li>
                             <li className="disabled"><a>About</a></li>
                         </ul>
                     </div>
@@ -95,7 +88,7 @@ export default function Home() {
                                     <li className="hover-bordered "><a onClick={() => LogOut()}>LogOut</a></li>
 
                                 </ul>
-                                <div class="">
+                                <div className="">
 
                                 </div>
                             </div>

@@ -11,9 +11,6 @@ const Category = () => {
     const [ID, setID] = useState(0);
     const [error, setError] = useState(false);
 
-    //const [pageNumber, setPageNumber] = useState(0);
-    //const [pageSize, setPageSize] = useState(0);
-
     //page
     const [nextPage, setNextPage] = useState(null);
     const [previousPage, setPreviousPage] = useState(null);
@@ -29,12 +26,9 @@ const Category = () => {
             .then(resp => resp.json())
             .then(data => {
                 console.log(data)
-                //setPageNumber(data.totalPages);
                 setNextPage(data.nextPage);
                 setCurrentNumberPage(data.pageNumber);
-                //console.log("siguiente pagina :" +data.nextPage)
                 setCategories(data.data)
-                //console.log("page size: "+data.pageSize);
             })
             .catch(err => {console.log(err)
                 setError(!error)

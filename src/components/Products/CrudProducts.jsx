@@ -17,7 +17,7 @@ export const Add = async (name,description,precio,author,idCategory,quantity,ima
             "Content-Type": "application/json",
             "Authorization": "Bearer " + getItem
         },
-        body: JSON.stringify({
+        body: {
             name: name,
             description: description,
             precio: precio,
@@ -25,7 +25,7 @@ export const Add = async (name,description,precio,author,idCategory,quantity,ima
             idCategory: idCategory,
             quantity: quantity,
             image: image
-        })
+        }
     }).then(res=>res.json()).then(data=>{
         if(data.succes===true){
             console.log(data)

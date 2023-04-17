@@ -18,6 +18,7 @@ import EditCategory from './components/Category/EditCategory'
 import EditProduct from './components/Products/EditProduct'*/
 import HomeView from './page/home/homeview'
 import Imagen from './page/home/Imagen'
+import Bill from './page/factura/bill'
 
 function App() {
   const getItem = localStorage.getItem("Token");
@@ -66,6 +67,10 @@ function App() {
                   element: <Users />
                 },
               ]
+            },
+            {
+              path: "bill",
+              element: <Bill/>
             },
             {
               path: "perfil",
