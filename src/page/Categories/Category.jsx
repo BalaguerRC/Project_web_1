@@ -84,6 +84,7 @@ const Category = () => {
                 "Authorization": "Bearer " + getItem
             }
         })
+        
             .then(resp => resp.json())
             .then(data => {
                 console.log(data)
