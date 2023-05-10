@@ -32,7 +32,7 @@ function App() {
           element: <Login/>
         }
       ]
-    }
+    }//createHashRouter
   ])*/
   const router = createBrowserRouter([
     {
