@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import './style/index.css'
+import download from "../../assets/Download2.png"
 
 export default function Home() {
     const navigate = useNavigate();
@@ -73,7 +74,7 @@ export default function Home() {
                                 </label>
                                 <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-200 w-52 rounded-box">
                                     <div className="flex items-center space-x-2">
-                                        <figure><img src="src/assets/download2.png" alt="Movie" className="w-16" /></figure>
+                                        <figure><img src={download} alt="Movie" className="w-16" /></figure>
                                         <div>
                                             <div className="text-lg font-extrabold">{GetUserData.name}</div>
                                             <div className="text-base-content/70 text-sm">{GetUserData.email}</div>

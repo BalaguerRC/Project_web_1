@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import download from "../../assets/download2.png"
+import download from "../../assets/Download2.png"
 
 const Perfil = () => {
     const getItem = localStorage.getItem("Token");
@@ -19,7 +19,7 @@ const Perfil = () => {
     return <div className="hero min-h-screen">
         <div className="hero-content">
             <div className="card card-side bg-base-100 shadow-xl ">
-                <figure><img src="src/assets/download2.png" alt="Movie" className="w-60" /></figure>
+                <figure><img src={download} alt="Movie" className="w-60" /></figure>
                 <div className="card-body">
                     <h2 className="card-title">Perfil</h2>
                     <div>
