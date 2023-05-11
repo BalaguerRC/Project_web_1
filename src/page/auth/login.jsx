@@ -9,7 +9,7 @@ export default function Login() {
     const navigate = useNavigate();
     const response = async (email, password) => {
         try {
-            await fetch('http://localhost:5081/api/Users/login', {
+            await fetch(import.meta.env.VITE_URL +'/Users/login', {
                 method: 'Post',
                 headers: {
                     'Content-Type': 'application/json'
